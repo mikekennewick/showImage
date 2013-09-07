@@ -1,0 +1,147 @@
+﻿<!DOCTYPE html>
+<!-- saved from url=(0016)http://localhost -->
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
+    <style type="text/css">
+        body
+        {
+            background-color:Black;
+            margin:0px;
+            padding:0px;
+            padding-top:20px;
+            text-align:center;
+        }
+
+        #container
+        {   
+            margin:0px;
+            padding:0px;
+    
+        }
+
+        #resultImage
+        {
+            margin:0px;
+            padding:0px;
+            max-height:100%;
+            width:auto;
+
+        }
+    </style>
+    
+    <title>Single Image</title>
+    <script type="text/javascript" src="https://www.google.com/jsapi?key={insert API key here}"></script>
+    <script type="text/javascript">
+
+        var searchString = "";
+
+        //Get search phrase
+        searchString = getQueryVariable("q");
+        
+        //Execute search     
+        google.load('search', '1');
+
+        //Extracts the querystring parameter for search string.  "index.html?q={search}"
+        function getQueryVariable(variable) {
+            var query = window.location.search.substring(1);
+            var vars = query.split('&');
+            for (var i = 0; i < vars.length; i++) {
+                var pair = vars[i].split('=');
+                if (decodeURIComponent(pair[0]) == variable) {
+                    return decodeURIComponent(pair[1]);
+                }
+            }
+        }
+
+        //Callback to execute when image search is complete
+        function searchComplete() {
+
+            // Check that we got results
+            if (imageSearch.results && imageSearch.results.length > 0) {
+
+                // Grab our content div, clear it.
+                var contentDiv = document.getElementById('content');
+                contentDiv.innerHTML = '';
+
+                // Loop through our results, printing them to the page.
+                var results = imageSearch.results;
+                // For each result write it's title and image to the screen
+                var result = results[0];
+                var imgContainer = document.createElement('div');
+                var title = document.createElement('div');
+
+                // We use titleNoFormatting so that no HTML tags are left in the 
+                // title
+                //title.innerHTML = result.titleNoFormatting;
+                var newImg = document.createElement('img');
+
+                newImg.src = result.unescapedUrl;
+                newImg.setAttribute("id", "resultImage");
+
+                var clientHeightStyle = "height:" + (window.innerHeight - 40) + "px";
+
+                newImg.setAttribute("style", clientHeightStyle);
+                imgContainer.appendChild(title);
+                imgContainer.appendChild(newImg);
+
+                // Put our title + image in the content
+                contentDiv.appendChild(imgContainer);
+            }
+        }
+
+        //Checks if a URL exists
+        function UrlExists(url) {
+            var http = new XMLHttpRequest();
+            http.open('HEAD', url, false);
+            http.send();
+            return http.status != 404;
+        }
+
+        //Performs the search
+        function doSearch() {
+
+            // Create an Image Search instance.
+            imageSearch = new google.search.ImageSearch();
+            
+            //Set restrictions
+
+            //optional set site filter
+            //imageSearch.setSiteRestriction("wikipedia.org");
+
+            imageSearch.setRestriction(
+            google.search.ImageSearch.RESTRICT_IMAGESIZE,
+            google.search.ImageSearch.IMAGESIZE_LARGE);
+
+            imageSearch.setRestriction(
+                google.search.Search.RESTRICT_SAFESEARCH,
+                google.search.Search.SAFESEARCH_MODERATE
+               );
+
+            imageSearch.setRestriction(
+              google.search.ImageSearch.RESTRICT_IMAGETYPE,
+              google.search.ImageSearch.IMAGETYPE_PHOTO
+            );
+            imageSearch.setRestriction(
+              google.search.ImageSearch.RESTRICT_FILETYPE,
+              google.search.ImageSearch.FILETYPE_JPG
+            );
+
+            // Set searchComplete as the callback function when a search is 
+            // complete.  The imageSearch object will have results in it.
+            imageSearch.setSearchCompleteCallback(this, searchComplete, null);
+
+            // Find me a beautiful car.
+            imageSearch.execute(searchString);
+
+            // Include the required Google branding
+            //google.search.Search.getBranding('branding');
+        }
+        google.setOnLoadCallback(doSearch);
+
+    </script>
+</head>
+<body>
+    <div id="container"><div id="content"></div></div>
+</body>
+</html>
