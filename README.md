@@ -1,7 +1,7 @@
 showImage
 =========
 
-Shows a single image in a webpage using Google Images API
+Shows a single image in a webpage using Google Images API.  
 
 You will need to setup a Google account and get your own API key then update this line:
 
